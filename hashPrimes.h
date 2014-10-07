@@ -9,7 +9,7 @@
  */
 
 #define NUM_HASH_PRIMES 26
-
+int location = 0;
 unsigned long hashPrimes[] = {53,
 			      97,
 			      193,

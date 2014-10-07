@@ -67,7 +67,7 @@ void testBasicMethods(){
   } else {
     std::cout << "SUCCESS: 6 added items came back out with correct keys" << std::endl;
   }
-
+  
   if(testHash.keyExists("daffodil")){
     std::cout << "SUCCESS: keyExists found 'daffodil'" << std::endl;
   } else {
@@ -98,7 +98,7 @@ void testBasicMethods(){
     std::cout << "ERROR: find did not throw an exception when given a non-existen key" << std::endl;
     return;
   }
-
+  
   testHash.remove("how");
   testHash.remove("now");
 
