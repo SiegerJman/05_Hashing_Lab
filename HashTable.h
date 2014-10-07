@@ -84,18 +84,30 @@ private:
 
 template <class Key, class T>
 HashTable<Key,T>::HashTable(){
-  //TODO
+	//still wrong double check
+	
+	
+	backingArraySize = hashPrimes[0];
+	backingArray = new HashRecord[backingArraySize];
+	numRemoved = 0;
+	numItems = 0;
 }
 
 template <class Key, class T>
 HashTable<Key,T>::~HashTable() {
   //TODO
+	for(unsigned int i=0;i<numItems; numItems--)
+	{
+
+	}
 }
 
 template <class Key, class T>
 unsigned long HashTable<Key,T>::calcIndex(Key k){
-  //TODO
-  return numItems; //This indicates failure, since it is an impossible value
+  //probably right
+	//calc starting index and then linear probe to find value, if no value is found, return where it ought to be.
+	return hash(k)%backingArraySize;
+  
 }
 
 template <class Key, class T>
@@ -111,8 +123,14 @@ void HashTable<Key,T>::remove(Key k){
 template <class Key, class T>
 T HashTable<Key,T>::find(Key k){
   //TODO
-  T dummy;
-  return dummy;
+/*	long i = 0;
+	while (HashTable(k).isNull = false){
+		if(hash(k).isDel == false && hash(k) == k) 
+			return t[k];
+		i=(i==backingArraySize-1)?0:i+1;
+	}
+  return t[i]; */
+	return 7;
 }
 
 template <class Key, class T>
@@ -123,8 +141,7 @@ bool HashTable<Key,T>::keyExists(Key k){
 
 template <class Key, class T>
 unsigned long HashTable<Key,T>::size(){
-  //TODO
-  return 0;
+	return numItems;
 }
 
 template <class Key, class T>
