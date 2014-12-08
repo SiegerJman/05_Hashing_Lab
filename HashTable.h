@@ -92,14 +92,21 @@ HashTable<Key,T>::HashTable(){
 
 template <class Key, class T>
 HashTable<Key,T>::~HashTable() {
-	delete backingArray;
+	delete[] backingArray;
 }
 
 template <class Key, class T>
 unsigned long HashTable<Key,T>::calcIndex(Key k){
   //probably right
 	//calc starting index and then linear probe to find value, if no value is found, return where it ought to be.
-	return hash(k)%backingArraySize;
+	unsigned long index = (hash(k) % backingArraySize);
+	while (backingArray[index].isNull == false)
+	{
+		if (backingArray[index].k == k)
+			return index;
+		index = (index + 1) % backingArraySize;
+	}
+		return index;
   
 }
 
@@ -110,36 +117,42 @@ void HashTable<Key, T>::add(Key k, T x){
 	{
 	grow();
 	}
-	if (backingArray[x].isNull|| !(backingArray[x].isDel))
+	unsigned long index = calcIndex(k);
+	if (backingArray[index].isNull|| (backingArray[index].isDel))
 	{
-		backingArray[x].isNull = false;
-		backingArray[x].isDel = false;
-		backingArray[x].k = k;
-		backingArray[x].x = x; 
+		if (backingArray[index].isDel)
+			numRemoved--;
+		backingArray[index].isNull = false;
+		backingArray[index].isDel = false;
+		backingArray[index].k = k;
+		backingArray[index].x = x; 
+		numItems++;
+
 	}
 }
 
 template <class Key, class T>
 void HashTable<Key,T>::remove(Key k){
-	backingArray[(find(k))].isDel = true;
+	backingArray[(calcIndex(k))].isDel = true;
 	numRemoved++; 
 	numItems--;
 }
 
 template <class Key, class T>
 T HashTable<Key,T>::find(Key k){
-  	long i = 0;
-	while (backingArray[i].isNull){
+  	long i = calcIndex(k);
+	while (!backingArray[i].isNull){
 		if(!backingArray[i].isDel && backingArray[i].k == k) 
 			return backingArray[i].x;
-		i=(i==backingArraySize-1)?0:i+1;
+		i= (i+1)%backingArraySize;
 	}
-  return backingArray[i].x; 
+	throw std::string("key was not found");
 }
 
 template <class Key, class T>
 bool HashTable<Key,T>::keyExists(Key k){
-	for (unsigned long i = 0; i < backingArraySize; i++){
+	unsigned long i = calcIndex(k);
+	while (!backingArray[i].isNull&&!backingArray[i].isDel){
 		if (backingArray[i].k == k)
 			return true;
 		}
@@ -155,18 +168,19 @@ template <class Key, class T>
 void HashTable<Key, T>::grow(){
 	//TODO
 	location++;
-	HashTable<std::string, int> temp;
-	for (unsigned int k = 0; k < backingArraySize; k++) {
-		if (!backingArray[k].isNull || !backingArray[k].isDel) {
-//why cant I store old values to the new table?
-//			temp[hash(k)] = hash(k);
+	HashRecord* temp;
+	for (unsigned int j = 0; j < backingArraySize; j++) {
+		if (!backingArray[j].isNull || !backingArray[j].isDel) {
+			add(backingArray[j].k, backingArray[j].x);
 		}
 	}
 	for (unsigned int i = 0; i < backingArraySize; i++)
 	{
-//why cant I assign old values to grown table?
-//		backingArray->k = temp[i];
+		backingArray[i].k = temp[i].k;
+		backingArray[i].x = temp[i].x;
+		backingArray[i].isNull = false;
+		backingArray[i].isDel = false;
 	}
 	backingArraySize = hashPrimes[location];
-
+	delete[] temp;
 }
